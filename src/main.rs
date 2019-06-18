@@ -1,22 +1,24 @@
 use std::net::Ipv4Addr;
+use std::str::FromStr;
 
 pub mod options;
 pub mod server;
 pub mod subcommands;
+pub mod utils;
 
 fn main() {
     let clioptions = options::get_options_from_cli();
 
     match clioptions.subcommand_name() {
         Some(subcommand) => match subcommand {
-            "serve" => match subcommands::serve::init(clioptions.value_of("port").unwrap().parse())
+            "serve" => match subcommands::serve::init(clioptions.value_of("port").unwrap().parse().unwrap())
             {
                 Ok(_) => {}
                 Err(_) => {}
             },
             "update" => match subcommands::update::init(
-                Ipv4Addr::from_str(clioptions.value_of("machine-address").unwrap()).unwrap(),
-                clioptions.value_of("port").unwrap().parse(),
+                Ipv4Addr::from_str(&clioptions.value_of("machine-address").unwrap()).unwrap(),
+                clioptions.value_of("port").unwrap().parse().unwrap(),
             ) {
                 Ok(_) => {}
                 Err(_) => {}

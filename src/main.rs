@@ -1,0 +1,30 @@
+use std::net::Ipv4Addr;
+
+pub mod options;
+pub mod server;
+pub mod subcommands;
+
+fn main() {
+    let clioptions = options::get_options_from_cli();
+
+    match clioptions.subcommand_name() {
+        Some(subcommand) => match subcommand {
+            "serve" => match subcommands::serve::init(clioptions.value_of("port").unwrap().parse())
+            {
+                Ok(_) => {}
+                Err(_) => {}
+            },
+            "update" => match subcommands::update::init(
+                Ipv4Addr::from_str(clioptions.value_of("machine-address").unwrap()).unwrap(),
+                clioptions.value_of("port").unwrap().parse(),
+            ) {
+                Ok(_) => {}
+                Err(_) => {}
+            },
+            _ => panic!("The inserted subcommand of {} is not valid.", subcommand),
+        },
+        None => {
+            panic!("No subcommand was inserted. Please choose one subcommand to perform execution.")
+        }
+    }
+}

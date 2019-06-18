@@ -1,0 +1,9 @@
+[package]
+name = "timekeeper"
+version = "0.1.0"
+authors = ["Rui Lopes <ruieduardo.fa.lopes@av.it.pt>"]
+edition = "2018"
+
+[dependencies]
+clap = "2.33"
+chrono = "0.4"

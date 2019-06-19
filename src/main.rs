@@ -4,6 +4,7 @@ use std::str::FromStr;
 pub mod options;
 pub mod server;
 pub mod subcommands;
+pub mod time_adjuster;
 pub mod utils;
 
 fn main() {

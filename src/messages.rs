@@ -50,22 +50,6 @@ impl From<[u8; 4]> for PTPMessage {
                 bytes
             ),
         }
-        //        if bytes[0] != 0 {
-        //            panic!("There is no correspondance between PTP Message Types and message type id {:?}", bytes)
-        //        }
-        //        if bytes[1] != 0 {
-        //            panic!("There is no correspondance between PTP Message Types and message type id {:?}", bytes)
-        //        }
-        //        if bytes[2] != 0 {
-        //            panic!("There is no correspondance between PTP Message Types and message type id {:?}", bytes)
-        //        }
-        //        match bytes[3] {
-        //            0x00 => PTPMessage::Sync,
-        //            0x08 => PTPMessage::FollowUp,
-        //            0x01 => PTPMessage::DelayRequest,
-        //            0x09 => PTPMessage::DelayResponse,
-        //            _ => panic!("There is no correspondance between PTP Message Types and message type id {:?}", bytes),
-        //        }
     }
 }
 

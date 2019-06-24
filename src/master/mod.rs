@@ -18,6 +18,7 @@ pub fn handle_client(mut stream: TcpStream) -> Result<(), Error> {
     let offset_from_client = from_slice(&offset_slice_from_client);
 
     // TODO estimate all offsets and retrieve a correction
+    let
     let correction: i64 = 0;
 
     // Pass the offset correction to slice and send it to the client.

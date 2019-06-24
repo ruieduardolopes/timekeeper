@@ -7,21 +7,20 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
         .about("Tool to sychronize time between a master machine and a slave.")
         .subcommand(
             SubCommand::with_name("serve")
-                .help("Serve time to a local machine on a given port")
                 .arg(
-                    Arg::with_name("port")
+                    Arg::with_name("machine-port")
                         .short("p")
                         .long("port")
-                        .value_name("port")
+                        .value_name("server-port")
                         .takes_value(true)
                         .required(false)
                         .default_value("5200")
                         .help("Port where to serve timekeeper's service (if left empty, default value of 5200 will be applied)."),
-                ),
+                )
+                .help("Serve time to a local machine on a given port"),
         )
         .subcommand(
             SubCommand::with_name("update")
-                .help("Connect to a local server machine to update clock")
                 .arg(
                     Arg::with_name("machine-address")
                         .short("s")
@@ -41,6 +40,7 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .default_value("5200")
                         .help("Timekeeper server machine port where the service is awaiting (if left empty, default value of 5200 will be applied.")
                 )
+                .help("Connect to a local server machine to update clock"),
         )
         .get_matches()
 }

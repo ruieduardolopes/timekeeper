@@ -1,6 +1,6 @@
 use std::io::Error;
 use std::net::TcpListener;
-use crate::server::handle_client;
+use crate::master::handle_client;
 use std::thread;
 
 pub fn init(port: u16) -> Result<(), Error> {

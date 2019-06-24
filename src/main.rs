@@ -17,14 +17,34 @@ fn main() {
 
     match clioptions.subcommand_name() {
         Some(subcommand) => match subcommand {
-            "serve" => match subcommands::serve::init(clioptions.value_of("port").unwrap().parse().unwrap())
-            {
+            "serve" => match subcommands::serve::init(
+                clioptions
+                    .subcommand_matches(subcommand)
+                    .unwrap()
+                    .value_of("machine-port")
+                    .expect("Bad machine port")
+                    .parse()
+                    .expect("Bad parsing"),
+            ) {
                 Ok(_) => {}
                 Err(_) => {}
             },
             "update" => match subcommands::update::init(
-                Ipv4Addr::from_str(&clioptions.value_of("machine-address").unwrap()).unwrap(),
-                clioptions.value_of("port").unwrap().parse().unwrap(),
+                Ipv4Addr::from_str(
+                    &clioptions
+                        .subcommand_matches(subcommand)
+                        .unwrap()
+                        .value_of("machine-address")
+                        .unwrap(),
+                )
+                .unwrap(),
+                clioptions
+                    .subcommand_matches(subcommand)
+                    .unwrap()
+                    .value_of("port")
+                    .unwrap()
+                    .parse()
+                    .unwrap(),
             ) {
                 Ok(_) => {}
                 Err(_) => {}

@@ -1,9 +1,9 @@
-use std::net::{TcpStream, Ipv4Addr};
-use chrono::Utc;
-use std::io::{Read, Write, Error};
-use crate::utils::*;
-use crate::time_adjuster::*;
 use crate::messages::PTPMessage;
+use crate::time_adjuster::*;
+use crate::utils::*;
+use chrono::Utc;
+use std::io::{Error, Read, Write};
+use std::net::{Ipv4Addr, TcpStream};
 
 pub fn init(address: Ipv4Addr, port: u16) -> Result<(), Error> {
     // Connect with timekeeper server.

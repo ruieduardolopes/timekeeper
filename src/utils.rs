@@ -37,4 +37,3 @@ pub fn to_slice_8(integer: i64) -> [u8; 8] {
         ((integer >> 0) & 0xFF) as u8,
     ]
 }
-

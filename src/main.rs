@@ -1,8 +1,13 @@
+#[macro_use]
+extern crate arrayref;
+
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 
+pub mod master;
+pub mod messages;
 pub mod options;
-pub mod server;
+pub mod slave;
 pub mod subcommands;
 pub mod time_adjuster;
 pub mod utils;

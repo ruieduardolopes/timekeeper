@@ -21,8 +21,7 @@ pub fn handle_client(mut stream: TcpStream) -> Result<(), Error> {
     let time_on_delay_request = time::now().to_timespec();
 
     // Send Delay Response to slave, with the registered value.
-    let delay_response_message =
-        PTPMessage::create_delay_response_message(time_on_delay_request);
+    let delay_response_message = PTPMessage::create_delay_response_message(time_on_delay_request);
     stream.write(&delay_response_message)?;
 
     Ok(())

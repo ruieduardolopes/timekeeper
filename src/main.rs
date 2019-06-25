@@ -9,7 +9,7 @@ pub mod messages;
 pub mod options;
 pub mod slave;
 pub mod subcommands;
-pub mod time_adjuster;
+pub mod adjuster;
 pub mod utils;
 
 fn main() {

@@ -1,10 +1,10 @@
+use crate::adjuster::*;
 use crate::messages::PTPMessage;
-use crate::time_adjuster::*;
 use crate::utils::*;
 use chrono::Utc;
+use libc::*;
 use std::io::{Error, Read, Write};
 use std::net::{Ipv4Addr, TcpStream};
-use libc::*;
 use time::Timespec;
 
 pub fn init(address: Ipv4Addr, port: u16) -> Result<(), Error> {
@@ -35,7 +35,8 @@ pub fn init(address: Ipv4Addr, port: u16) -> Result<(), Error> {
     // Wait and receive Delay Response from master.
     let mut delay_reponse_message: [u8; 16] = [0; 16];
     stream.read(&mut delay_reponse_message)?;
-    let time_on_delay_request_from_master = timespec_from_slice(array_ref!(delay_reponse_message, 4, 16));
+    let time_on_delay_request_from_master =
+        timespec_from_slice(array_ref!(delay_reponse_message, 4, 16));
 
     // Evaluate the propagation delay.
     let propagation_delay = time_on_delay_request_from_master - time_on_delay_request;

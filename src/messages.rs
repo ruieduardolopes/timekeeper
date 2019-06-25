@@ -1,3 +1,6 @@
+use time::Timespec;
+use crate::utils::*;
+
 pub enum PTPMessage {
     Sync,
     FollowUp,
@@ -6,22 +9,24 @@ pub enum PTPMessage {
 }
 
 impl PTPMessage {
-    pub fn create_follow_up_message(timestamp: [u8; 8]) -> [u8; 12] {
+    pub fn create_follow_up_message(timestamp: Timespec) -> [u8; 16] {
         let follow_up_magic_number: [u8; 4] = PTPMessage::FollowUp.into();
         let mut message = vec![];
         message.extend_from_slice(&follow_up_magic_number);
-        message.extend_from_slice(&timestamp);
+        message.extend_from_slice(&to_slice_8(timestamp.sec));
+        message.extend_from_slice(&to_slice(timestamp.nsec as i64));
 
-        *array_ref!(message, 0, 12)
+        *array_ref!(message, 0, 16)
     }
 
-    pub fn create_delay_response_message(timestamp: [u8; 8]) -> [u8; 12] {
+    pub fn create_delay_response_message(timestamp: Timespec) -> [u8; 16] {
         let delay_response_magic_number: [u8; 4] = PTPMessage::DelayResponse.into();
         let mut message = vec![];
         message.extend_from_slice(&delay_response_magic_number);
-        message.extend_from_slice(&timestamp);
+        message.extend_from_slice(&to_slice_8(timestamp.sec));
+        message.extend_from_slice(&to_slice(timestamp.nsec as i64));
 
-        *array_ref!(message, 0, 12)
+        *array_ref!(message, 0, 16)
     }
 }
 

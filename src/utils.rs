@@ -1,8 +1,10 @@
-pub fn from_slice(slice: &[u8; 4]) -> i64 {
-    ((slice[0] as i64) << 24)
-        + ((slice[1] as i64) << 16)
-        + (((slice[2]) as i64) << 8)
-        + ((slice[3]) as i64)
+use time::Timespec;
+
+pub fn from_slice(slice: &[u8; 4]) -> i32 {
+    ((slice[0] as i32) << 24)
+        + ((slice[1] as i32) << 16)
+        + (((slice[2]) as i32) << 8)
+        + ((slice[3]) as i32)
 }
 
 pub fn from_slice_8(slice: &[u8; 8]) -> i64 {
@@ -36,4 +38,11 @@ pub fn to_slice_8(integer: i64) -> [u8; 8] {
         ((integer >> 8) & 0xFF) as u8,
         ((integer >> 0) & 0xFF) as u8,
     ]
+}
+
+pub fn timespec_from_slice(slice: &[u8; 16]) -> Timespec {
+    Timespec {
+        sec: from_slice_8(array_ref!(slice, 0, 8)),
+        nsec: from_slice(array_ref!(slice, 8, 4)),
+    }
 }

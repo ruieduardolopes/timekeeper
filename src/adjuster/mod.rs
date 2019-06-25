@@ -7,7 +7,7 @@ pub fn set_time_by_offset(offset: Duration) -> Result<(), Error> {
         let new = time::now().to_timespec() + offset;
         let timeval = libc::timeval {
             tv_sec: new.sec,
-            tv_usec: (new.nsec as f64 * 0.001) as i32,
+            tv_usec: (new.nsec as f64 * 0.001) as i64,
         };
         unsafe { libc::settimeofday(&timeval, std::ptr::null()) };
     } else {

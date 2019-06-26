@@ -2,7 +2,7 @@ use crate::master::handle_client;
 use std::io::Error;
 use std::net::TcpListener;
 use std::thread;
-use slog::Logger;
+use slog::{info, Logger};
 
 pub fn init(port: u16, log: Logger) -> Result<(), Error> {
     let listener = TcpListener::bind(format!("127.0.0.1:{}", port))?;
@@ -12,7 +12,7 @@ pub fn init(port: u16, log: Logger) -> Result<(), Error> {
         match stream {
             Ok(stream) => {
                 info!(log, "[timekeeper] A new slave has communicated. Starting protocol...");
-                thread::spawn(move || handle_client(stream));
+                thread::spawn(move || handle_client(stream, log.clone()));
             }
             Err(_) => {
                 panic!("Connection's failed");

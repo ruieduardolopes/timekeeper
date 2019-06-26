@@ -1,7 +1,8 @@
 #[macro_use]
 extern crate arrayref;
 
-use slog::{error, info, Drain};
+#[macro_use]
+use slog::{error, info, o, Drain};
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 
@@ -36,7 +37,7 @@ fn main() {
                         Some(port) => {
                             match port.parse() {
                                 Ok(port) => {main_port = port},
-                                Err(error) => {error!(log, "[timekeeper] Timekeeper failed to run as master, since the port could not be parsed as integer. Port read: {}", port, error);
+                                Err(error) => {error!(log, "[timekeeper] Timekeeper failed to run as master, since the port could not be parsed as integer. Port read: {}", port);
                                 panic!("{}", error)},
                             }
                         },
@@ -95,12 +96,14 @@ fn main() {
                     }
                 }
                 match subcommands::update::init(main_address, main_port, log.clone()) {
-                    Ok(_) => {},
-                    Err(error) => {error!(
-                        log,
-                        "[timekeeper] Timekeeper slave failed to run. Reason: {}", error
-                    );
-                        panic!("{}", error)},
+                    Ok(_) => {}
+                    Err(error) => {
+                        error!(
+                            log,
+                            "[timekeeper] Timekeeper slave failed to run. Reason: {}", error
+                        );
+                        panic!("{}", error)
+                    }
                 }
             }
             _ => panic!("The inserted subcommand of {} is not valid.", subcommand),

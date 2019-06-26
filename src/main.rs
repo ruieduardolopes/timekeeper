@@ -2,7 +2,7 @@
 extern crate arrayref;
 
 #[macro_use]
-use slog::{error, info, o, Drain};
+use slog::{error, o, Drain};
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 

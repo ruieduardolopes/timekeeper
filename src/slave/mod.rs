@@ -1,12 +1,9 @@
 use crate::adjuster::*;
 use crate::messages::PTPMessage;
 use crate::utils::*;
-use chrono::Utc;
-use libc::*;
 use slog::{info, Logger};
 use std::io::{Error, Read, Write};
 use std::net::{Ipv4Addr, TcpStream};
-use time::Timespec;
 
 pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
     // Connect with timekeeper server.

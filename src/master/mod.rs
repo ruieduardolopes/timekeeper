@@ -1,7 +1,5 @@
 use crate::messages::*;
 use crate::utils::*;
-use chrono::offset::TimeZone;
-use chrono::Utc;
 use slog::Logger;
 use std::io::{Error, Read, Write};
 use std::net::TcpStream;

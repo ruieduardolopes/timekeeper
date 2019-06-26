@@ -1,54 +1,108 @@
 #[macro_use]
 extern crate arrayref;
 
+use slog::{error, info, Drain};
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 
+pub mod adjuster;
 pub mod master;
 pub mod messages;
 pub mod options;
 pub mod slave;
 pub mod subcommands;
-pub mod adjuster;
 pub mod utils;
 
 fn main() {
     let clioptions = options::get_options_from_cli();
 
+    // Initialize logger.
+    let terminal_decorator = slog_term::TermDecorator::new().build();
+    let terminal_drain = slog_term::FullFormat::new(terminal_decorator)
+        .build()
+        .fuse();
+    let terminal_drain = slog_async::Async::new(terminal_drain).build().fuse();
+
+    let log = slog::Logger::root(terminal_drain, o!());
+
     match clioptions.subcommand_name() {
         Some(subcommand) => match subcommand {
-            "serve" => match subcommands::serve::init(
-                clioptions
-                    .subcommand_matches(subcommand)
-                    .unwrap()
-                    .value_of("machine-port")
-                    .expect("Bad machine port")
-                    .parse()
-                    .expect("Bad parsing"),
-            ) {
-                Ok(_) => {}
-                Err(_) => {}
-            },
-            "update" => match subcommands::update::init(
-                Ipv4Addr::from_str(
-                    &clioptions
+            "serve" => {
+                let mut main_port = 0;
+                match clioptions
                         .subcommand_matches(subcommand)
                         .unwrap()
-                        .value_of("machine-address")
-                        .unwrap(),
-                )
-                .unwrap(),
-                clioptions
-                    .subcommand_matches(subcommand)
-                    .unwrap()
-                    .value_of("port")
-                    .unwrap()
-                    .parse()
-                    .unwrap(),
-            ) {
-                Ok(_) => {}
-                Err(_) => {}
-            },
+                        .value_of("machine-port") {
+                        Some(port) => {
+                            match port.parse() {
+                                Ok(port) => {main_port = port},
+                                Err(error) => {error!(log, "[timekeeper] Timekeeper failed to run as master, since the port could not be parsed as integer. Port read: {}", port, error);
+                                panic!("{}", error)},
+                            }
+                        },
+                        None => {error!(log, "[timekeeper] Timekeeper failed to run as master, since no port has been successfully read")},
+                    };
+                match subcommands::serve::init(main_port, log.clone()) {
+                    Ok(_) => {}
+                    Err(error) => {
+                        error!(
+                            log,
+                            "[timekeeper] Timekeeper master failed to run. Reason: {}", error
+                        );
+                        panic!("{}", error)
+                    }
+                }
+            }
+            "update" => {
+                let mut main_address = Ipv4Addr::new(0, 0, 0, 0);
+                let mut main_port = 0;
+                match clioptions.subcommand_matches(subcommand) {
+                    Some(address) => match address.value_of("machine-address") {
+                        Some(address) => match Ipv4Addr::from_str(&address) {
+                            Ok(address) => main_address = address,
+                            Err(error) => {
+                                error!(log, "[timekeeper] Timekeeper failed to run as a slave, since the given address is not correct. Address: {}", address);
+                                panic!("{}", error)
+                            }
+                        },
+                        None => {
+                            error!(log, "[timekeeper] Timekeeper failed to run as a slave, since no address was given");
+                            panic!("No option was given as address.")
+                        }
+                    },
+                    None => {
+                        error!(log, "[timekeeper] Timekeeper failed to run as a slave, since no address was given");
+                        panic!("No subcommand was given as update")
+                    }
+                };
+                match clioptions.subcommand_matches(subcommand) {
+                    Some(port) => match port.value_of("port") {
+                        Some(port) => match port.parse() {
+                            Ok(port) => main_port = port,
+                            Err(error) => {
+                                error!(log, "[timekeeper] Timekeeper failed to run as a slave, since the given port is not correct. Port: {}", port);
+                                panic!("{}", error)
+                            }
+                        },
+                        None => {
+                            error!(log, "[timekeeper] Timekeeper failed to run as a slave, since no address was given");
+                            panic!("No option was given as address.")
+                        }
+                    },
+                    None => {
+                        error!(log, "[timekeeper] Timekeeper failed to run as a slave, since no port was given");
+                        panic!("No subcommand was given as update")
+                    }
+                }
+                match subcommands::update::init(main_address, main_port, log.clone()) {
+                    Ok(_) => {},
+                    Err(error) => {error!(
+                        log,
+                        "[timekeeper] Timekeeper slave failed to run. Reason: {}", error
+                    );
+                        panic!("{}", error)},
+                }
+            }
             _ => panic!("The inserted subcommand of {} is not valid.", subcommand),
         },
         None => {

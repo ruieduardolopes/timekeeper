@@ -17,7 +17,7 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .default_value("5200")
                         .help("Port where to serve timekeeper's service (if left empty, default value of 5200 will be applied)."),
                 )
-                .help("Serve time to a local machine on a given port"),
+                .about("Serve time to a local machine on a given port"),
         )
         .subcommand(
             SubCommand::with_name("update")
@@ -38,9 +38,9 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .takes_value(true)
                         .required(false)
                         .default_value("5200")
-                        .help("Timekeeper server machine port where the service is awaiting (if left empty, default value of 5200 will be applied.")
+                        .help("Timekeeper server machine port where the service is awaiting (if left empty, default value of 5200 will be applied).")
                 )
-                .help("Connect to a local server machine to update clock"),
+                .about("Connect to a local server machine to update clock"),
         )
         .get_matches()
 }

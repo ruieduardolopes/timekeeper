@@ -2,7 +2,7 @@
 extern crate arrayref;
 
 #[macro_use]
-use slog::{error, o, Drain};
+use slog::{error, info, o, Drain};
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 
@@ -77,7 +77,7 @@ fn main() {
                     }
                 };
                 match clioptions.subcommand_matches(subcommand) {
-                    Some(port) => match port.value_of("port") {
+                    Some(port) => match port.value_of("machine-port") {
                         Some(port) => match port.parse() {
                             Ok(port) => main_port = port,
                             Err(error) => {
@@ -86,8 +86,8 @@ fn main() {
                             }
                         },
                         None => {
-                            error!(log, "[timekeeper] Timekeeper failed to run as a slave, since no address was given");
-                            panic!("No option was given as address.")
+                            error!(log, "[timekeeper] Timekeeper failed to run as a slave, since no port was given");
+                            panic!("No option was given as port.")
                         }
                     },
                     None => {

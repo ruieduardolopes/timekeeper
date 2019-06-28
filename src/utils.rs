@@ -40,7 +40,7 @@ pub fn to_slice_8(integer: i64) -> [u8; 8] {
     ]
 }
 
-pub fn timespec_from_slice(slice: &[u8; 16]) -> Timespec {
+pub fn timespec_from_slice(slice: &[u8; 12]) -> Timespec {
     Timespec {
         sec: from_slice_8(array_ref!(slice, 0, 8)),
         nsec: from_slice(array_ref!(slice, 8, 4)),

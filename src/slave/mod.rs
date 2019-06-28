@@ -1,13 +1,76 @@
 use crate::adjuster::*;
 use crate::messages::PTPMessage;
 use crate::utils::*;
-use slog::{info, Logger};
-use std::io::{Error, Read, Write};
+use slog::{error, info, Logger};
+use std::io::{Error, ErrorKind, Read, Write};
 use std::net::{Ipv4Addr, TcpStream};
 
 pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
     // Connect with timekeeper server.
-    let mut stream = TcpStream::connect(format!("{}:{}", address, port))?;
+    info!(log, "[timekeeper] Trying to connect {}:{}.", address, port);
+    let mut stream = TcpStream::connect(&format!("{}:{}", address, port));
+    let mut stream = match stream {
+        Ok(stream) => stream,
+        Err(error) => {
+            match error.kind() {
+                ErrorKind::NotFound => {
+                    error!(log, "[timekeeper] Endpoint {}:{} not found", address, port);
+                }
+                ErrorKind::PermissionDenied => {
+                    error!(
+                        log,
+                        "[timekeeper] Permission denied on connecting with {}:{}", address, port
+                    );
+                }
+                ErrorKind::ConnectionRefused => {
+                    error!(
+                        log,
+                        "[timekeeper] Connection refused on connecting with {}:{}", address, port
+                    );
+                }
+                ErrorKind::ConnectionReset => {
+                    error!(
+                        log,
+                        "[timekeeper] Connection reset with {}:{}", address, port
+                    );
+                }
+                ErrorKind::ConnectionAborted => {
+                    error!(
+                        log,
+                        "[timekeeper] Connection aborted with {}:{}", address, port
+                    );
+                }
+                ErrorKind::NotConnected => {
+                    error!(log, "[timekeeper] Not connected with {}:{}", address, port);
+                }
+                ErrorKind::AddrInUse => {
+                    error!(log, "[timekeeper] Address already in use");
+                }
+                ErrorKind::AddrNotAvailable => {
+                    error!(log, "[timekeeper] Address not available");
+                }
+                ErrorKind::BrokenPipe => {
+                    error!(log, "[timekeeper] Broken pipe with {}:{}", address, port);
+                }
+                ErrorKind::AlreadyExists => {
+                    error!(log, "[timekeeper] Already exists");
+                }
+                ErrorKind::WouldBlock => {
+                    error!(log, "[timekeeper] Connection would block");
+                }
+                ErrorKind::TimedOut => {
+                    error!(
+                        log,
+                        "[timekeeper] Connection timed out with {}:{}.", address, port
+                    );
+                }
+                ErrorKind::Other => {}
+                ErrorKind::UnexpectedEof => {}
+                _ => {}
+            };
+            panic!("{}", error);
+        }
+    };
     info!(
         log,
         "[timekeeper] Connection made with master at {} in port {}", address, port
@@ -35,7 +98,7 @@ pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
         "[timekeeper] Waiting for a Follow-Up message from master..."
     );
     stream.read(&mut follow_up_message)?;
-    let time_on_sync_from_master = timespec_from_slice(array_ref!(follow_up_message, 4, 16));
+    let time_on_sync_from_master = timespec_from_slice(array_ref![follow_up_message, 4, 12]);
     info!(
         log,
         "[timekeeper] Received Follow-Up message from master with timestamp {}.{} seconds",
@@ -77,7 +140,7 @@ pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
     );
     stream.read(&mut delay_reponse_message)?;
     let time_on_delay_request_from_master =
-        timespec_from_slice(array_ref!(delay_reponse_message, 4, 16));
+        timespec_from_slice(array_ref![delay_reponse_message, 4, 12]);
     info!(
         log,
         "[timekeeper] Received Delay Response message from master with timestamp {}.{} seconds",
@@ -90,8 +153,8 @@ pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
     let propagation_delay = propagation_delay / 2;
     info!(
         log,
-        "[timekeeper] Estimated {} seconds of propagation delay. Fixing...",
-        propagation_delay.num_seconds()
+        "[timekeeper] Estimated {} milliseconds of propagation delay. Fixing...",
+        propagation_delay.num_milliseconds()
     );
 
     // Adjust the internal clock with such offset.

@@ -153,8 +153,8 @@ pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
     let propagation_delay = propagation_delay / 2;
     info!(
         log,
-        "[timekeeper] Estimated {} milliseconds of propagation delay. Fixing...",
-        propagation_delay.num_milliseconds()
+        "[timekeeper] Estimated {} nanoseconds of propagation delay. Fixing...",
+        propagation_delay.num_nanoseconds().unwrap()
     );
 
     // Adjust the internal clock with such offset.

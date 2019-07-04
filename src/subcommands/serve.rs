@@ -5,7 +5,7 @@ use std::net::TcpListener;
 use std::thread;
 
 pub fn init(port: u16, log: Logger) -> Result<(), Error> {
-    let listener = TcpListener::bind(format!("192.168.6.1:{}", port));
+    let listener = TcpListener::bind(format!("10.1.1.3:{}", port));
     let listener = match listener {
         Ok(listener) => {listener},
         Err(error) => {match error.kind() {

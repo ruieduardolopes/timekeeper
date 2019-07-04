@@ -49,3 +49,11 @@ fn get_timespec(timespec: Timespec) -> libc::timespec {
         tv_nsec: timespec.nsec as i64,
     }
 }
+
+#[cfg(all(target_arch = "arm", target_os="linux", target_env="gnu"))]
+fn get_timespec(timespec: Timespec) -> libc::timespec {
+    libc::timespec {
+        tv_sec: timespec.sec as i32,
+        tv_nsec: timespec.nsec as i32,
+    }
+}

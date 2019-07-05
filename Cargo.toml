@@ -18,3 +18,4 @@ time = "0.1"
 default = [ "linux" ]
 linux = []
 mips = []
+arm = []

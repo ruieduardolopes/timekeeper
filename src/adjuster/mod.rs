@@ -4,7 +4,10 @@ use time::{Duration, Timespec};
 
 #[cfg(target_os = "linux")]
 pub fn set_time_by_offset(offset: Duration, dry_run: bool, log: Logger) -> Result<(), Error> {
-    let mut new_clock: libc::timespec;
+    let mut new_clock: libc::timespec = libc::timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
     if cfg!(target_os = "linux") {
         debug!(
             log,

@@ -72,7 +72,7 @@ fn main() {
             "update" => {
                 let mut main_address = Ipv4Addr::new(0, 0, 0, 0);
                 let mut main_port = 0;
-                let dry_run: bool;
+                let dry_run = false;
                 match clioptions.subcommand_matches(subcommand) {
                     Some(address) => match address.value_of("machine-address") {
                         Some(address) => match Ipv4Addr::from_str(&address) {

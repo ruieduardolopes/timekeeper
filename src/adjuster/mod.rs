@@ -4,7 +4,7 @@ use time::{Duration, Timespec};
 
 #[cfg(target_os = "linux")]
 pub fn set_time_by_offset(offset: Duration, dry_run: bool, log: Logger) -> Result<(), Error> {
-    let mut new_clock: Timespec;
+    let mut new_clock: libc::timespec;
     if cfg!(target_os = "linux") {
         debug!(
             log,
@@ -34,8 +34,8 @@ pub fn set_time_by_offset(offset: Duration, dry_run: bool, log: Logger) -> Resul
             debug!(
                 log,
                 "[timekeeper] Fixed time is {} seconds and {} nanoseconds",
-                new_clock.sec,
-                new_clock.nsec
+                new_clock.tv_sec,
+                new_clock.tv_nsec
             )
         } else {
             debug!(

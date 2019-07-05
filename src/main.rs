@@ -72,6 +72,7 @@ fn main() {
             "update" => {
                 let mut main_address = Ipv4Addr::new(0, 0, 0, 0);
                 let mut main_port = 0;
+                let dry_run: bool;
                 match clioptions.subcommand_matches(subcommand) {
                     Some(address) => match address.value_of("machine-address") {
                         Some(address) => match Ipv4Addr::from_str(&address) {
@@ -110,7 +111,14 @@ fn main() {
                         panic!("No subcommand was given as update")
                     }
                 }
-                match subcommands::update::init(main_address, main_port, log.clone()) {
+                match clioptions.subcommand_matches(subcommand) {
+                    Some(_) => {
+                        info!(log, "[timekeeper] Running synchronization in dry-run mode...");
+                        dry_run = true;
+                    },
+                    None => ()
+                }
+                match subcommands::update::init(main_address, main_port, dry_run, log.clone()) {
                     Ok(_) => {}
                     Err(error) => {
                         error!(

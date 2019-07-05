@@ -49,6 +49,13 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .default_value("5200")
                         .help("Timekeeper server machine port where the service is awaiting.")
                 )
+                .arg(
+                    Arg::with_name("dry-run")
+                        .short("d")
+                        .long("dry-run")
+                        .required(false)
+                        .help("Execute synchronization without changing clocks")
+                )
                 .about("Connect to a local server machine to update clock"),
         )
         .get_matches()

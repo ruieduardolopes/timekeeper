@@ -5,7 +5,7 @@ use slog::{error, info, Logger};
 use std::io::{Error, ErrorKind, Read, Write};
 use std::net::{Ipv4Addr, TcpStream};
 
-pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
+pub fn init(address: Ipv4Addr, port: u16, dry_run: bool, log: Logger) -> Result<(), Error> {
     // Connect with timekeeper server.
     info!(log, "[timekeeper] Trying to connect {}:{}.", address, port);
     let mut stream = TcpStream::connect(&format!("{}:{}", address, port));
@@ -115,7 +115,7 @@ pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
     );
 
     // Adjust the internal clock with such offset.
-    set_time_by_offset(main_offset, log.clone());
+    set_time_by_offset(main_offset, dry_run, log.clone());
 
     // Send Delay Request to Master.
     let delay_request_message = &to_slice(PTPMessage::DelayRequest as i64);
@@ -158,7 +158,7 @@ pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
     );
 
     // Adjust the internal clock with such offset.
-    set_time_by_offset(propagation_delay, log.clone());
+    set_time_by_offset(propagation_delay, dry_run, log.clone());
 
     Ok(())
 }

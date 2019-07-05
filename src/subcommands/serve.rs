@@ -1,11 +1,11 @@
 use crate::master::handle_client;
 use slog::{error, info, Logger};
 use std::io::{Error, ErrorKind};
-use std::net::TcpListener;
+use std::net::{TcpListener, Ipv4Addr};
 use std::thread;
 
-pub fn init(port: u16, log: Logger) -> Result<(), Error> {
-    let listener = TcpListener::bind(format!("10.1.1.3:{}", port));
+pub fn init(address: Ipv4Addr, port: u16, log: Logger) -> Result<(), Error> {
+    let listener = TcpListener::bind(format!("{}:{}", address, port));
     let listener = match listener {
         Ok(listener) => {listener},
         Err(error) => {match error.kind() {

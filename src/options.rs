@@ -1,12 +1,21 @@
 use clap::{App, Arg, ArgMatches, SubCommand};
 
 pub fn get_options_from_cli() -> ArgMatches<'static> {
-    App::new("Timekeeper: Sychronize time between two machines.")
-        .version("0.1.0")
+    App::new("Timekeeper: Synchronize time between two machines.")
+        .version("1.1.1")
         .author("Rui Lopes")
-        .about("Tool to sychronize time between a master machine and a slave.")
+        .about("Tool to synchronize time between a master machine and a slave.")
         .subcommand(
             SubCommand::with_name("serve")
+                .arg(
+                    Arg::with_name("machine-address")
+                        .short("a")
+                        .long("address")
+                        .value_name("ipv4-address")
+                        .takes_value(true)
+                        .required(true)
+                        .help("Address where to serve timekeeper's service ."),
+                )
                 .arg(
                     Arg::with_name("machine-port")
                         .short("p")
@@ -15,9 +24,9 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .takes_value(true)
                         .required(false)
                         .default_value("5200")
-                        .help("Port where to serve timekeeper's service (if left empty, default value of 5200 will be applied)."),
+                        .help("Port where to serve timekeeper's service."),
                 )
-                .about("Serve time to a local machine on a given port"),
+                .about("Serve time to a local machine on a given address and port"),
         )
         .subcommand(
             SubCommand::with_name("update")
@@ -38,7 +47,7 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .takes_value(true)
                         .required(false)
                         .default_value("5200")
-                        .help("Timekeeper server machine port where the service is awaiting (if left empty, default value of 5200 will be applied).")
+                        .help("Timekeeper server machine port where the service is awaiting.")
                 )
                 .about("Connect to a local server machine to update clock"),
         )

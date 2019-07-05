@@ -29,21 +29,36 @@ fn main() {
     match clioptions.subcommand_name() {
         Some(subcommand) => match subcommand {
             "serve" => {
+                let mut main_address = Ipv4Addr::new(0, 0, 0, 0);
                 let mut main_port = 0;
                 match clioptions
                         .subcommand_matches(subcommand)
                         .unwrap()
-                        .value_of("machine-port") {
-                        Some(port) => {
-                            match port.parse() {
-                                Ok(port) => {main_port = port},
-                                Err(error) => {error!(log, "[timekeeper] Timekeeper failed to run as master, since the port could not be parsed as integer. Port read: {}", port);
+                        .value_of("machine-address") {
+                        Some(address) => {
+                            // FIXME
+                            match Ipv4Addr::from_str(address) {
+                                Ok(address) => {main_address = address},
+                                Err(error) => {error!(log, "[timekeeper] Timekeeper failed to run as master, since the address could not be parsed as IPv4 address. Address read: {}", address);
                                 panic!("{}", error)},
                             }
                         },
-                        None => {error!(log, "[timekeeper] Timekeeper failed to run as master, since no port has been successfully read")},
+                        None => {error!(log, "[timekeeper] Timekeeper failed to run as master, since no address has been successfully read")},
                     };
-                match subcommands::serve::init(main_port, log.clone()) {
+                match clioptions
+                    .subcommand_matches(subcommand)
+                    .unwrap()
+                    .value_of("machine-port") {
+                    Some(port) => {
+                        match port.parse() {
+                            Ok(port) => {main_port = port},
+                            Err(error) => {error!(log, "[timekeeper] Timekeeper failed to run as master, since the port could not be parsed as integer. Port read: {}", port);
+                                panic!("{}", error)},
+                        }
+                    },
+                    None => {error!(log, "[timekeeper] Timekeeper failed to run as master, since no port has been successfully read")},
+                };
+                match subcommands::serve::init(main_address, main_port, log.clone()) {
                     Ok(_) => {}
                     Err(error) => {
                         error!(

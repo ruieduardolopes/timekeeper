@@ -2,7 +2,7 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 
 pub fn get_options_from_cli() -> ArgMatches<'static> {
     App::new("Timekeeper: Synchronize time between two machines.")
-        .version("1.1.1")
+        .version("1.1.2")
         .author("Rui Lopes")
         .about("Tool to synchronize time between a master machine and a slave.")
         .subcommand(

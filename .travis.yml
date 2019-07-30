@@ -12,7 +12,6 @@ matrix:
     rust: nightly
   - env: TARGET=x86_64-unknown-linux-gnu
   - env: TARGET=armv7-unknown-linux-gnueabihf
-  - env: TARGET=arm-unknown-linux-gnueabihf
 before_install:
 - set -e
 - rustup self update

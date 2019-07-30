@@ -1,6 +1,6 @@
 [package]
 name = "timekeeper"
-version = "1.1.0"
+version = "1.1.2"
 authors = ["Rui Lopes <ruieduardo.fa.lopes@av.it.pt>"]
 edition = "2018"
 

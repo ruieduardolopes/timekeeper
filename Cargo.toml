@@ -14,8 +14,11 @@ slog-term = "2.4"
 slog-async = "2.3"
 time = "0.1"
 
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
 [features]
-default = [ "linux" ]
-linux = []
 mips = []
-arm = []

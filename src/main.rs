@@ -112,9 +112,11 @@ fn main() {
                     }
                 }
                 match clioptions.subcommand_matches(subcommand) {
-                    Some(_) => {
-                        info!(log, "[timekeeper] Running synchronization in dry-run mode...");
-                        dry_run = true;
+                    Some(matches) => {
+                        if matches.is_present("dry-run") {
+                            info!(log, "[timekeeper] Running synchronization in dry-run mode...");
+                            dry_run = true;
+                        }
                     },
                     None => ()
                 }
